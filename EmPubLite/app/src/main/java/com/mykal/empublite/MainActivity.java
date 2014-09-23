@@ -15,6 +15,7 @@ public class MainActivity extends Activity {
 
     private ViewPager pager = null;
     private ContentsAdapter adapter = null;
+    private static final String MODEL = "model";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,11 @@ public class MainActivity extends Activity {
         pager.setAdapter(adapter);
         findViewById(R.id.progressBar1).setVisibility(View.GONE);
         findViewById(R.id.pager).setVisibility(View.VISIBLE);
+        ModelFragment mfrag = (ModelFragment)getFragmentManager().findFragmentByTag(MODEL);
+
+        if(mfrag == null) {
+            getFragmentManager().beginTransaction().add(new ModelFragment(), MODEL).commit();
+        }
     }
 
 
