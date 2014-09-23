@@ -3,17 +3,27 @@ package com.mykal.empublite;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.view.ViewParent;
 
 
 public class MainActivity extends Activity {
+
+    private ViewPager pager = null;
+    private ContentsAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pager = (ViewPager)findViewById(R.id.pager);
+        adapter = new ContentsAdapter(this);
+        pager.setAdapter(adapter);
+        findViewById(R.id.progressBar1).setVisibility(View.GONE);
+        findViewById(R.id.pager).setVisibility(View.VISIBLE);
     }
 
 
