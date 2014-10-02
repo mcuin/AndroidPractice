@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewParent;
 
+import de.greenrobot.event.EventBus;
+
 
 public class MainActivity extends Activity {
 
@@ -62,5 +64,19 @@ public class MainActivity extends Activity {
                 return (true);
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+
+        super.onPause();
     }
 }
