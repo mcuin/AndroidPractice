@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.os.StrictMode;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,17 +23,21 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setupStrictMode();
+        
         setContentView(R.layout.activity_main);
         pager = (ViewPager)findViewById(R.id.pager);
-        adapter = new ContentsAdapter(this);
-        pager.setAdapter(adapter);
-        findViewById(R.id.progressBar1).setVisibility(View.GONE);
-        findViewById(R.id.pager).setVisibility(View.VISIBLE);
+
         ModelFragment mfrag = (ModelFragment)getFragmentManager().findFragmentByTag(MODEL);
 
         if(mfrag == null) {
             getFragmentManager().beginTransaction().add(new ModelFragment(), MODEL).commit();
+        } else  if (mfrag.getBooks() != null) {
+            setupPager(mfrag.getBooks());
         }
+
+        getActionBar().setHomeButtonEnabled(true);
     }
 
 
@@ -47,6 +52,8 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                pager.setCurrentItem(0, false);
+
                 return (true);
 
             case R.id.about:
@@ -62,6 +69,7 @@ public class MainActivity extends Activity {
                 startActivity(i);
 
                 return (true);
+
         }
         return(super.onOptionsItemSelected(item));
     }
@@ -78,5 +86,29 @@ public class MainActivity extends Activity {
         EventBus.getDefault().unregister(this);
 
         super.onPause();
+    }
+
+    private void setupPager(BookContents contents) {
+        adapter = new ContentsAdapter(this, contents);
+        pager.setAdapter(adapter);
+
+        findViewById(R.id.progressBar1).setVisibility(View.GONE);
+        findViewById(R.id.pager).setVisibility(View.VISIBLE);
+    }
+
+    public void onEventMainThread(BookLoadedEvent event) {
+        setupPager(event.getBook());
+    }
+
+    public void setupStrictMode() {
+        StrictMode.ThreadPolicy.Builder builder = new StrictMode.ThreadPolicy.Builder().detectDiskWrites().detectNetwork();
+
+        if (BuildConfig.DEBUG) {
+            builder.penaltyDeath();
+        } else {
+            builder.penaltyLog();
+        }
+
+        StrictMode.setThreadPolicy(builder.build());
     }
 }
