@@ -15,16 +15,23 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity {
 
     TextView mTextView;
+    static final String STATE_SCORE = "playerScore";
+    static final String STATE_LEVEL = "playerLevel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextView = (TextView) findViewById(R.id.textMessage);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            ActionBar actionBar = getActionBar();
-            actionBar.setHomeButtonEnabled(false);
+        if (savedInstanceState != null) {
+            mCurrentScore = savedInstanceState.getInt(STATE_SCORE);
+            mCurrentLevel = savedInstanceState.getInt(STATE_LEVEL);
+        } else {
+            mTextView = (TextView) findViewById(R.id.textMessage);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                ActionBar actionBar = getActionBar();
+                actionBar.setHomeButtonEnabled(false);
+            }
         }
     }
 
@@ -49,6 +56,21 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        savedInstanceState.putInt(STATE_SCORE, mCurrentScore);
+        savedInstanceState.putInt(STATE_LEVEL, mCurrentLevel);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mCurrentScore = savedInstanceState.getInt(STATE_SCORE);
+        mCurrentLevel = savedInstanceState.getInt(STATE_LEVEL);
     }
 
     @Override
