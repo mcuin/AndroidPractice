@@ -1,6 +1,9 @@
 package com.mykal.activitylifecycle;
 
 import android.app.ActionBar;
+import android.content.ContentValues;
+import android.content.Context;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -49,6 +52,23 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (!gpsEnabled) {
+
+        }
+
+    }
+
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
 
@@ -65,6 +85,22 @@ public class MainActivity extends ActionBarActivity {
         if(mCamera == null) {
             intializeCamera();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(NotePad.Notes.COLUMN_NAME_NOTE, getCurrentNoteText());
+        contentValues.put(NotePad.Notes.COLUMN_NAME_TITLE, getCurrentNoteTitle());
+
+        getContentResolver().update(
+                mUri,
+                contentValues,
+                null,
+                null
+        );
     }
 
     @Override
