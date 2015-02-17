@@ -48,6 +48,26 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(mCamera == null) {
+            intializeCamera();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
