@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements HeadlinesFragment.OnFragmentInteractionListener{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,5 +60,28 @@ public class MainActivity extends FragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onArticleSelected(int position) {
+
+        ArticleFragment articleFragment = (ArticleFragment) getFragmentManager().findFragmentById(
+                R.id.articles_fragment);
+
+        if (articleFragment != null) {
+            articleFragment.updateArticleView(position);
+        } else {
+            ArticleFragment articleFragment1 = new ArticleFragment();
+            Bundle args1 = new Bundle();
+
+            args1.putInt(ArticleFragment.ARG_POSITION, position);
+            articleFragment1.setArguments(args1);
+
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.fragment_container, articleFragment1);
+            transaction.addToBackStack(null);
+
+            transaction.commit();
+        }
     }
 }

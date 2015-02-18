@@ -1,12 +1,14 @@
 package com.mykal.dynamicui;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 
 /**
@@ -17,7 +19,7 @@ import android.view.ViewGroup;
  * Use the {@link HeadlinesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HeadlinesFragment extends Fragment {
+public class HeadlinesFragment extends ListFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,6 +30,13 @@ public class HeadlinesFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    OnHeadlinesSelectedListener mCallback;
+
+    public interface OnHeadlinesSelectedListener {
+        public void onArticlesSelected(int position);
+
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -78,11 +87,16 @@ public class HeadlinesFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mCallback = (OnHeadlinesSelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHeadlinesSelectedListener");
         }
+    }
+
+    @Override
+    public void onListItemClick(ListView listView, View view, int position, long id) {
+        mCallback.onArticlesSelected(position);
     }
 
     @Override
