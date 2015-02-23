@@ -89,6 +89,17 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        mSharedActionProvider = (SharedActionProvider) item.getActionProvider();
+
+        return true;
+    }
+
+    public void setShareIntent(Intent shareIntent) {
+        if (mSharedActionProvider != null) {
+            mSharedActionProvider.setShareIntent(shareIntent);
+        }
     }
 
     @Override
