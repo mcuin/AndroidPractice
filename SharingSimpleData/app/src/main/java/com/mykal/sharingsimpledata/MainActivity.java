@@ -16,6 +16,22 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                handleText(intent);
+            } else if ((type.startsWith("image/"))) {
+                handleBinary(intent);
+            } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+                if (type.startsWith("image/")) {
+                    handleMult(intent);
+                }
+            }
+        }
     }
 
     public void sendText() {
@@ -44,6 +60,27 @@ public class MainActivity extends ActionBarActivity {
         multIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
         multIntent.setType("image/*");
         startActivity(Intent.createChooser(multIntent, "Share Images to: "));
+    }
+
+    public void handleText(Intent intent) {
+        String shared = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (shared != null) {
+
+        }
+    }
+
+    public void handleBinary(Intent intent) {
+        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (shared != null) {
+
+        }
+    }
+
+    public void  handleMult(Intent intent) {
+        ArrayList<Uri> imageUri = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (imageUri != null) {
+
+        }
     }
 
 
