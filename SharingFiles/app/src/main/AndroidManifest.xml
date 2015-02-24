@@ -24,6 +24,19 @@
                     android:resource="@xml/filepaths" />
             </provider>
         </activity>
+        <activity android:name=".FileSelectActivity"
+            android:label="@File Selector" >
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.PICK" />
+                <action
+                    android:name="android.intent.action.DEFAULT" />
+                <action
+                    android:name="android.intent.action.OPENABLE" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            </activity>
     </application>
 
 </manifest>

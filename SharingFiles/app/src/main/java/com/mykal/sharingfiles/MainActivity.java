@@ -1,17 +1,64 @@
 package com.mykal.sharingfiles;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+
+import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private File mPrivateRootDir;
+    private File mImagesDir;
+    File[] mImageFiles;
+    String[] mImageFilenames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent mResultIntent = new Intent("com.mykal.ACTION_RETURN_FILE");
+        mPrivateRootDir = getFilesDir();
+        mImagesDir = new File(mPrivateRootDir, "images");
+        mImageFiles = mImagesDir.listFiles();
+        setResult(Activity.RESULT_CANCELED, null);
+
+        mFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener()) {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
+                File requestFile = new File(mImageFilename[position]);
+
+                try {
+                    fileUri = FileProvider.getUriForFile(MainActivity.this, "com.mykal.fileprovider", requestFile);
+                } catch(IllegalArgumentException e) {
+                    Log.e("File Selector", "The selected file can't be shared: " + clickedFilename);
+                }
+            }
+
+            if (fileUri != null) {
+                mResultIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                mResultIntent.setDataAndType(fileUri, getContentResolver().getType(fileUri));
+
+                MainActivity.this.setResult(Activity.RESULT_OK, mResultIntent);
+            } else {
+                mResultIntent.setDataAndType(null, "");
+                MainActivity.this.setResult(RESULT_CANCELED, mResultIntent);
+            }
+        }
+    }
+
+    public void onDoneClick(View v) {
+        finish();
     }
 
 
