@@ -2,8 +2,10 @@ package com.mykal.sharingfiles;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -103,6 +106,15 @@ public class MainActivity extends ActionBarActivity {
             return;
         } else {
             Uri returnUri = returnIntent.getData();
+            String mimeType = getContentResolver().getType(returnUri);
+            Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
+            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+            returnCursor.moveToFirst();
+            TextView nameView = (TextView) findViewById(R.id.filename_text);
+            TextView sizeView = (TextView) findViewById(R.id.filesize_text);
+            nameView.setText(returnCursor.getString(nameIndex));
+            sizeView.setText(Long.toString(returnCursor.getLong(sizeIndex)));
             try {
                 mInputPFD = getContentResolver().openFileDescriptor(returnUri, "r");
             } catch (FileNotFoundException e) {
