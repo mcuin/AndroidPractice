@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -48,6 +50,17 @@ public class MainActivity extends Activity {
                 }
             }
         }
+
+        if (isBlueToothA2dpOn()) {
+
+        } else if (isSpeakerPhoneOn()) {
+
+        } else if (isWiredHeadsetOn()) {
+
+        } else {
+
+        }
+
     }
 
 
@@ -87,4 +100,25 @@ public class MainActivity extends Activity {
             }
         }
     }
+
+    private class NoisyAudioStreamReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+
+            }
+        }
+    }
+
+    private IntentFilter filter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+
+    private void startPlayback() {
+        registerReceiver(myNoisyAudioStreamReceiver(), filter);
+    }
+
+    private void stopPlayback() {
+        unregisterReceiver(myNoisyAudioStreamReceiver());
+    }
 }
+
