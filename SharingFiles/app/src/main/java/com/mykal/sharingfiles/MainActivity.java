@@ -2,6 +2,8 @@ package com.mykal.sharingfiles;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -20,12 +24,16 @@ public class MainActivity extends ActionBarActivity {
     private File mImagesDir;
     File[] mImageFiles;
     String[] mImageFilenames;
+    private Intent mRequestFileIntent;
+    private ParcelFileDescriptor mInputPFD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRequestFileIntent = new Intent(Intent.ACTION_PICK);
+        mRequestFileIntent.setType("image/jpg");
         Intent mResultIntent = new Intent("com.mykal.ACTION_RETURN_FILE");
         mPrivateRootDir = getFilesDir();
         mImagesDir = new File(mPrivateRootDir, "images");
@@ -61,6 +69,11 @@ public class MainActivity extends ActionBarActivity {
         finish();
     }
 
+    public void requestFile() {
+
+        startActivityForResult(mRequestFileIntent, 0);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,5 +95,23 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActvivityResult(int requestCode, int resultCode, Intent returnIntent) {
+        if (resultCode != RESULT_OK) {
+            return;
+        } else {
+            Uri returnUri = returnIntent.getData();
+            try {
+                mInputPFD = getContentResolver().openFileDescriptor(returnUri, "r");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.e("MainActvity", "File Not Found");
+                return;
+            }
+
+            FileDescriptor fd = mInputPFD.getFileDescriptor();
+        }
     }
 }
