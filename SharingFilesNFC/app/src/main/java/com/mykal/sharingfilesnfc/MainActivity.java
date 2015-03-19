@@ -1,13 +1,18 @@
 package com.mykal.sharingfilesnfc;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +20,7 @@ import android.view.MenuItem;
 import java.io.File;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     NfcAdapter mNfcAdapter;
     boolean mAndroidBeam = false;
@@ -25,6 +30,8 @@ public class MainActivity extends ActionBarActivity {
     File requestFile = new File(extDir, transferFile);
     private FileUriCallback mFileUriCallback;
     PackageManager manager;
+    private File mParentPAth;
+    private Intent mIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,5 +90,48 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void handleViewIntent() {
+        mIntent = getIntent();
+        String action = mIntent.getAction();
+
+        if (TextUtils.equals(action, Intent.ACTION_VIEW)) {
+            Uri beamUri = mIntent.getData();
+
+            if (TextUtils.equals(beamUri.getScheme(), "file")) {
+                mParentPAth = handleFileUri(beamUri);
+            } else if (TextUtils.equals(beamUri.getScheme(), "content")) {
+                mParentPAth = handleContentUri(beamUri);
+            }
+        }
+    }
+
+    public String handleFileUri(Uri beamUri) {
+        String filename = beamUri.getPath();
+        File copiedFile = new File(filename);
+        return copiedFile.getParent();
+    }
+
+    public String handleContentUri(Uri beamUri) {
+        int filenameIndex;
+        File copiedFile;
+        String filename;
+
+        if (!TextUtils.equals(beamUri.getAuthority(), MediaStore.AUTHORITY)) {
+
+        } else {
+            String[] projection = {MediaStore.MediaColumns.DATA};
+            Cursor cursorPath = getContentResolver().query(beamUri, projection, null, null, null);
+
+            if (cursorPath != null && cursorPath.moveToFirst()) {
+                filenameIndex = cursorPath.getColumnIndex(MediaStore.MediaColumns.DATA);
+                filename = cursorPath.getString(filenameIndex);
+                copiedFile = new File(filename);
+                return new String(copiedFile.getParent());
+            } else {
+                return null;
+            }
+        }
     }
 }

@@ -21,6 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.mykal.sharingfilesnfc.ViewActivty"
+            android:label="Android Beam Viewer" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <catagory android:name="android.intent.catagory.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
