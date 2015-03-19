@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
     File requestFile = new File(extDir, transferFile);
     private FileUriCallback mFileUriCallback;
     PackageManager manager;
-    private File mParentPAth;
+    private String mParentPAth;
     private Intent mIntent;
 
     @Override
