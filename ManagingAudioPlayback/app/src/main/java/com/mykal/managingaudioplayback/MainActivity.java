@@ -16,13 +16,38 @@ public class MainActivity extends Activity {
 
     Context mContext;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AudioManager am = mContext.getSystemService(Context.AUDIO_SERVICE);
+        final AudioManager am = mContext.getSystemService(Context.AUDIO_SERVICE);
         am.registerMediaButtonEventReceiver(RemoteControlReceiver);
         am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
+
+        int result = am.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            am.registerMediaButtonEventReceiver(RemoteControlReceiver);
+        }
+
+        am.abandonAudioFocus(afChangeListener);
+
+        int result2 = am.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+
+        final AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusChange) {
+                if (focusChange = AUDIOFOCUS_LOSS_TRANSIENT) {
+
+                } else if (focusChange = AudioManager.AUDIOFOCUS_GAIN) {
+
+                } else if (focusChange = AudioManager.AUDIOFOCUS_LOSS) {
+                    am.unregisterMediaButtonEventReciever(RemoteControlReceiver);
+                    am.abandonAudioFocus(afChangeListener);
+                }
+            }
+        }
     }
 
 
