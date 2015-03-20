@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
@@ -18,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -27,6 +31,9 @@ public class MainActivity extends Activity {
     String mCurrentPhotoPath;
     static final int REQUEST_VIDEO_CAPTURE = 1;
     VideoView mVideoView;
+    Camera mCamera;
+    Preview mPreview;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +143,32 @@ public class MainActivity extends Activity {
             startActivityForResult(videoIntent, REQUEST_VIDEO_CAPTURE);
         }
     }
+
+    private boolean safeCamOpen(int d) {
+        boolean opened = false;
+
+        try {
+            releaseCameraPreview();
+            mCamera = Camera.open(id);
+            opened = (mCamera != null);
+        } catch (Exception e) {
+            Log.e(getString(R.string.app_name), "failed to open camera.");
+            e.printStackTrace();
+        }
+
+        return opened;
+    }
+
+    private void releaseCameraPreview() {
+        mPreview.setCamera(null);
+
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+
 
 
 }
