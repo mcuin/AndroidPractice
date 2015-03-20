@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,8 @@ public class MainActivity extends Activity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView mImageView;
     String mCurrentPhotoPath;
+    static final int REQUEST_VIDEO_CAPTURE = 1;
+    VideoView mVideoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,11 @@ public class MainActivity extends Activity {
             Bundle extras = data.getExtras();
             Bitmap image = (Bitmap) extras.get("data");
             mImageView.setImageBitmap(image);
+        }
+
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+            Uri videoUri = data.getData();
+            mVideoView.setVideoURI(videoUri);
         }
     }
 
@@ -120,4 +128,14 @@ public class MainActivity extends Activity {
 
         mImageView.setImageBitmap(bitmap);
     }
+
+    private void dispatchTakeVideoIntent() {
+        Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+        if (videoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(videoIntent, REQUEST_VIDEO_CAPTURE);
+        }
+    }
+
+
 }
